@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" integrity="sha512-DIW4FkYTOxjCqRt7oS9BFO+nVOwDL4bzukDyDtMO7crjUZhwpyrWBFroq+IqRe6VnJkTpRAS6nhDvf0w+wHmxg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <title>Aescos</title>
 </head>
 
@@ -17,6 +18,22 @@
 
     </nav>
 
+        <div class="relative mb-20">
+        {% if messages %}
+            <div class="absolute top-5 left-1/2 transform -translate-x-1/2 w-full max-w-md mb-10">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} p-4 rounded-lg shadow-lg mb-4 text-white 
+                        {% if message.tags == 'error' %} bg-red-600 {% elif message.tags == 'success' %} bg-green-600 {% elif message.tags == 'info' %} bg-blue-600 {% endif %}"
+                        data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000"
+                        id="alert-{{ forloop.counter }}">
+                        <div class="flex justify-between items-center">
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
     <main class="py-10">
 
         <div
@@ -123,6 +140,24 @@
     <footer class="flex justify-center text-center items-center bg-gray-700 text-white h-52">
         <p>Aesco</p>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800, 
+            easing: 'ease-in-out', 
+            once: true, 
+            delay: 100 
+        });
+
+        setTimeout(function() {
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
+                setTimeout(function() {
+                    alert.remove();
+                }, 1000); 
+            });
+        }, 5000); 
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>

@@ -1,0 +1,159 @@
+{% load static %}
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesco</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+    <nav class="flex justify-between items-center shadow-lg px-4 sm:px-24 py-4">
+        <div class="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+            Aesco
+        </div>
+        <div>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </nav>
+
+    <main class="mx-3 sm:mx-20 my-20">
+
+        <div class="flex justify-center mb-12">
+            <div class="text-center sm:w-1/2">
+                <p class="text-2xl font-bold mb-3">Automation Essay Corrections</p>
+                <p>menggunakan Sentence-Transformers (S-BERD) dan Alg</p>
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="sm:w-3/4">
+            <form action="{% url 'pembandinganJawaban' %}" method="post" enctype="multipart/form-data">
+                
+                <div class="shadow-lg border-2 p-3 rounded-lg">
+                    <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                        <!-- Input jumlah soal -->
+                        <div class="mb-4">
+                            <label for="jumlah-soal" class="block mb-2 text-sm font-medium text-gray-900">
+                                Jumlah soal
+                            </label>
+                            <select id="jumlah-soal" name="jumlah-soal"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="" selected disabled>Pilih jumlah soal</option>
+                                <option value="1">1 soal</option>
+                                <option value="2">2 soal</option>
+                                <option value="3">3 soal</option>
+                                <option value="4">4 soal</option>
+                                <option value="5">5 soal</option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="file-pdf" class="block mb-2 text-sm font-medium text-gray-900">Upload file
+                                PDF</label>
+                            <input type="file" id="file-pdf" name="file-pdf" accept="application/pdf"
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+
+                        <div>
+                            <label for="kategori" class="block mb-2 text-sm font-medium text-gray-900">Kategori
+                                Pelajaran</label>
+                            <select id="kategori" name="kategori"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option selected disabled>Pilih kategori</option>
+                                {% for item in getKategori %}
+                                    <option value="{{ item.nama }}">{{ item.nama }}</option>
+                                {% endfor %}
+
+
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <div id="form-container">
+                        <div class="border-2 p-3 rounded-lg mb-5 form-item">
+                            <div class="flex gap-3 items-center mb-3">
+                                <p class="font-bold">Pertanyaan #1</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Essay
+                                        question</label>
+                                    <textarea rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Enter your essay question..." required></textarea>
+                                </div>
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Student's answer</label>
+                                    <textarea rows="4"
+                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                        placeholder="Paste your students answer here..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex flex-col items-center gap-3 pb-5">
+                       {% csrf_token %}
+                        <button type="submit"
+                            class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                            Analisa Semua Esai
+                        </button>
+                    </div>
+               </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const formContainer = document.getElementById('form-container')
+            const jumlahSoalSelect = document.getElementById('jumlah-soal')
+            const originalForm = formContainer.querySelector('.form-item')
+
+                function generateForms(jumlah) {
+                    formContainer.innerHTML = ''
+
+                    for (let i = 1; i <= jumlah; i++) {
+                        const clone = originalForm.cloneNode(true)
+
+                        const title = clone.querySelector('p.font-bold')
+                        title.textContent = `Question #${i}`
+
+                        const textareas = clone.querySelectorAll('textarea')
+                        textareas.forEach((textarea, index) => {
+                            textarea.value = ''
+                            if (index === 0) {
+                                textarea.name = `soal_${i}`
+                            } else if (index === 1) {
+                                textarea.name = `jawaban_${i}`
+                            }
+                        })
+
+                        formContainer.appendChild(clone)
+                    }
+                }
+
+            jumlahSoalSelect.addEventListener('change', function () {
+                const jumlah = parseInt(this.value)
+                if (jumlah > 0 && jumlah <= 10) {
+                    generateForms(jumlah)
+                }
+            });
+
+        </script>
+    </main>
+
+    <footer class="flex justify-center text-center items-center bg-gray-700 text-white h-52">
+        <p>Aesco</p>
+    </footer>
+</body>
+
+</html>
+

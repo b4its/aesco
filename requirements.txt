@@ -1,4 +1,5 @@
 pip install pdfplumber
 pip install sentence-transformers
 pip install pandas
+pip install tf-keras
 pip install django

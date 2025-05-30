@@ -1,0 +1,4 @@
+pip install pdfplumber
+pip install sentence-transformers
+pip install pandas
+pip install django

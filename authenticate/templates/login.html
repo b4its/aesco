@@ -1,14 +1,25 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
     <style>
       body {
         background: #f0f4f8;
       }
+
       .login-container {
         max-width: 900px;
         background: white;
@@ -16,67 +27,101 @@
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         overflow: hidden;
       }
+
       .bg-illustration {
         background: linear-gradient(135deg, #3b82f6, #60a5fa);
         color: white;
         padding: 2rem;
       }
+
+      .message-container {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 500px;
+        z-index: 9999;
+      }
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   </head>
   <body>
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-      <div class="row login-container w-100">
-        <div class="col-md-6 d-none d-md-flex bg-illustration flex-column justify-content-center">
-          <div class="text-center">
-            <h2 class="fw-bold">Aesco</h2>
-          </div>
+    <div class="container d-flex justify-content-center align-items-center vh-100 position-relative">
+      <!-- Alert Messages -->
+      {% if messages %}
+      <div class="message-container">
+        {% for message in messages %}
+        <div
+          class="alert alert-{{ message.tags }} alert-dismissible fade show shadow"
+          role="alert"
+          data-aos="fade-up"
+          data-aos-delay="200"
+          data-aos-duration="1000"
+        >
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    <div class="relative mb-20">
-        {% if messages %}
-            <div class="absolute top-5 left-1/2 transform -translate-x-1/2 w-full max-w-md mb-10">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} p-4 rounded-lg shadow-lg mb-4 text-white 
-                        {% if message.tags == 'error' %} bg-red-600 {% elif message.tags == 'success' %} bg-green-600 {% elif message.tags == 'info' %} bg-blue-600 {% endif %}"
-                        data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000"
-                        id="alert-{{ forloop.counter }}">
-                        <div class="flex justify-between items-center">
-                            <span>{{ message }}</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Login Card -->
+      <div class="row login-container w-100">
+        <!-- Left Side -->
+        <div class="col-md-6 d-none d-md-flex bg-illustration flex-column justify-content-center align-items-center text-center">
+          <h2 class="fw-bold">Aesco</h2>
+        </div>
+
+        <!-- Right Side -->
         <div class="col-md-6 p-5">
           <h3 class="mb-4 text-center fw-bold">Login</h3>
+
           <form method="POST">
+            {% csrf_token %}
             <div class="mb-3">
               <label for="username" class="form-label">Username</label>
-              <input type="username" class="form-control" id="username" placeholder="masukkan username" name="username" required />
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                name="username"
+                placeholder="Masukkan username"
+                required
+              />
             </div>
+
             <div class="mb-3">
               <label for="password" class="form-label">Kata Sandi</label>
-              <input type="password" class="form-control" id="password" placeholder="masukkan password" name="password" required />
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Masukkan password"
+                required
+              />
             </div>
+
             <div class="d-grid gap-2">
-                {% csrf_token %}
               <button type="submit" class="btn btn-primary">Login</button>
             </div>
           </form>
-          <div class="d-flex justify-content-center mt-3">
-              <p>mau daftar kah? disini <a href="{% url "registrationApps" %}">Daftar</a></p>
+
+          <div class="text-center mt-3">
+            <p>
+              Belum punya akun? <a href="{% url 'registrationApps' %}">Daftar di sini</a>
+            </p>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
 
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js" integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

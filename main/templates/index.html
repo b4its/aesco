@@ -1,12 +1,8 @@
 {% load static %}
-<!doctype html>
-<html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aesco</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 </head>
@@ -42,7 +38,7 @@
 
         <div class="flex justify-center mb-12">
             <div class="text-center sm:w-1/2">
-                <p class="text-2xl font-bold mb-3">Automation Essay Corrections</p>
+                <p class="text-2xl font-bold mb-3">Automatic Essay Corrections</p>
                 <p>menggunakan Sentence-Transformers (S-BERD)</p>
             </div>
         </div>
@@ -61,12 +57,12 @@
                             <select id="jumlah-soal" name="jumlah-soal"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                 <option value="" selected disabled>Pilih jumlah soal</option>
-                
-                                <option value="1">1 soal</option>
-                                <option value="2">2 soal</option>
-                                <option value="3">3 soal</option>
-                                <option value="4">4 soal</option>
-                                <option value="5">5 soal</option>
+
+                                {% for i in numbers %}
+                                    <option value="{{ i }}">{{ i }} soal</option>
+                                {% endfor %}
+
+
 
                             </select>
                         </div>
@@ -79,15 +75,13 @@
                         </div>
 
                         <div>
-                            <label for="kategori" class="block mb-2 text-sm font-medium text-gray-900">Kategori
-                                Pelajaran</label>
+                            <label for="kategori" class="block mb-2 text-sm font-medium text-gray-900">Kategori Pelajaran</label>
                             <select id="kategori" name="kategori"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                 <option selected disabled>Pilih kategori</option>
                                 {% for item in getKategori %}
                                     <option value="{{ item.nama }}">{{ item.nama }}</option>
                                 {% endfor %}
-
 
                             </select>
                         </div>
@@ -148,13 +142,10 @@
                     const textareas = clone.querySelectorAll('textarea')
                     textareas.forEach((textarea, index) => {
                         textarea.value = ''
-                        if (index === 0) {
-                            textarea.name = `soal_${i}`
-                        } else if (index === 1) {
-                            textarea.name = `kunci_${i}` 
-                        } else if (index === 2) {
-                            textarea.name = `jawaban_${i}`
-                        }
+                        textarea.name = index === 0 ? `soal_${i}` :
+                                        index === 1 ? `kunci_${i}` :
+                                        index === 2 ? `jawaban_${i}` : '';
+
                     })
 
                     formContainer.appendChild(clone)

@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, HttpResponse
 from django.contrib.auth.decorators import login_required
 import os
 import tempfile
+from django.urls import reverse_lazy
 import pdfplumber
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
@@ -35,25 +36,22 @@ def extract_pdf_sentences(pdf_path):
                 words.extend(parts)
     return words
 
-@login_required
+@login_required(login_url=reverse_lazy('login'))  # pakai nama URL
 def home(request):
     kategori = KategoriSoal.objects.all()
+    numbers = range(1, 6)  # dari 1 sampai 5
     context = {
-        'getKategori' : kategori
+        'getKategori' : kategori,
+        'numbers': numbers
     }
     return render(request, 'index.html', context)
 
 def classify_similarity(score):
-    if score <= 0.20:
-        return "Sangat Tidak Relevan", 1
-    elif score <= 0.40:
-        return "Tidak Relevan", 2
-    elif score <= 0.60:
-        return "Sedang", 3
-    elif score <= 0.80:
-        return "Relevan", 4
-    else:
-        return "Sangat Relevan", 5
+    return ("Sangat Tidak Relevan", 1) if score <= 0.20 else \
+           ("Tidak Relevan", 2) if score <= 0.40 else \
+           ("Sedang", 3) if score <= 0.60 else \
+           ("Relevan", 4) if score <= 0.80 else \
+           ("Sangat Relevan", 5)
 
 def evaluate_with_pdf_context(soal_list, kunci_list, siswa_list, pdf_sentences, threshold=0.80):
     results = []
@@ -92,9 +90,7 @@ def evaluate_with_pdf_context(soal_list, kunci_list, siswa_list, pdf_sentences, 
             "jawaban_siswa": siswa,
             "similaritas_kunci_siswa": round(sim_kunci_siswa, 4),
             "similaritas_pdf": round(sim_from_pdf, 4),
-            "tingkat_relevansi": tingkat,
             "skor": skor,
-            "status": status
         })
 
     nilai_akhir = round((total_score / (len(soal_list) * 5)) * 100, 2)  # Skor maksimal = 5 * jumlah soal
@@ -137,9 +133,9 @@ def pembandinganJawaban(request):
 
         # Evaluasi
         hasil = evaluate_with_pdf_context(soal_list, jawaban_kunci, jawaban_siswa, pdf_sentences)
-        print("=== DEBUG hasil ===")
-        print(type(hasil))
-        print(hasil)
+        # print("=== DEBUG hasil ===")
+        # print(type(hasil))
+        # print(hasil)
 
         # Pisahkan hasil dari fungsi evaluasi
         data_hasil, nilai_akhir = hasil  # hasil = (list of dict, nilai akhir float)

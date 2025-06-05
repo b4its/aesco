@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aesco</title>
+    <link rel="shortcut icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-3xLROXc2sojT4gmTLatpmHAh5XnmfjkLTA&s" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 </head>
@@ -23,7 +24,7 @@
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }} p-4 rounded-lg shadow-lg mb-4 text-white 
                         {% if message.tags == 'error' %} bg-red-600 {% elif message.tags == 'success' %} bg-green-600 {% elif message.tags == 'info' %} bg-blue-600 {% endif %}"
-                        data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000"
+                        data-aos="fade-up" data-aos-delay="200" dat a-aos-duration="1000"
                         id="alert-{{ forloop.counter }}">
                         <div class="flex justify-between items-center">
                             <span>{{ message }}</span>
@@ -54,7 +55,7 @@
                             <label for="jumlah-soal" class="block mb-2 text-sm font-medium text-gray-900">
                                 Jumlah soal
                             </label>
-                            <select id="jumlah-soal" name="jumlah-soal"
+                            <select id="jumlah-soal" name="jumlah-soal" required
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                 <option value="" selected disabled>Pilih jumlah soal</option>
 
@@ -67,7 +68,7 @@
                             </select>
                         </div>
 
-                        <div>
+                        {% comment %} <div>
                             <label for="file-pdf" class="block mb-2 text-sm font-medium text-gray-900">Upload file
                                 PDF</label>
                             <input type="file" id="file-pdf" name="file-pdf" accept="application/pdf" disabled
@@ -84,7 +85,8 @@
                                 {% endfor %}
 
                             </select>
-                        </div>
+                        </div> {% endcomment %}
+
                     </div>
                     <div id="form-container">
                         <div class="border-2 p-3 rounded-lg mb-5 form-item">

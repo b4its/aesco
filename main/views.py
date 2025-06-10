@@ -129,12 +129,15 @@ def pembandinganJawaban(request):
         kunci_list = [request.POST.get(f'kunci_{i}', '').strip() for i in range(1, jumlah_soal + 1)]
         siswa_list = [request.POST.get(f'jawaban_{i}', '').strip() for i in range(1, jumlah_soal + 1)]
 
-        # Referensi tambahan
+        # Ambil referensi PDF jika ada
         referensi_pdf = extract_pdf_text(pdf_file) if pdf_file else ""
+
+        # Ambil referensi CSV (sudah aman)
         referensi_csv = extract_csv_context()
 
-        # Gabungan referensi semantik: kategori + PDF + dataset CSV
-        referensi_semantik = normalize_text(f"{kategori} {referensi_pdf} {referensi_csv}")
+        # Gabungan referensi semantik (hanya kalau salah satu tidak kosong)
+        referensi_items = [kategori, referensi_pdf, referensi_csv]
+        referensi_semantik = normalize_text(" ".join([r for r in referensi_items if r]))
         
         # Simpan embedding PDF ke cache global (opsional tapi efisien)
         if 'pdf_ref' not in embedding_cache:

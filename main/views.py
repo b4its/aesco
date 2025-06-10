@@ -131,21 +131,23 @@ def pembandinganJawaban(request):
 
         # Ambil referensi PDF jika ada
         referensi_pdf = extract_pdf_text(pdf_file) if pdf_file else ""
-
-        # Ambil referensi CSV (sudah aman)
         referensi_csv = extract_csv_context()
 
-        # Gabungan referensi semantik (hanya kalau salah satu tidak kosong)
-        referensi_items = [kategori, referensi_pdf, referensi_csv]
-        referensi_semantik = normalize_text(" ".join([r for r in referensi_items if r]))
-        
-        # Simpan embedding PDF ke cache global (opsional tapi efisien)
-        if 'pdf_ref' not in embedding_cache:
-            embedding_cache['pdf_ref'] = model.encode(referensi_pdf, convert_to_tensor=True)
+        # Ringkas & gabungkan referensi
+        def ringkas_teks(teks, max_kalimat=5):
+            kalimat = teks.split('.')
+            return '. '.join(kalimat[:max_kalimat])
 
-        if 'semantik_ref' not in embedding_cache:
-            embedding_cache['semantik_ref'] = model.encode(referensi_semantik, convert_to_tensor=True)
+        ringkasan_pdf = ringkas_teks(referensi_pdf)
+        ringkasan_csv = ringkas_teks(referensi_csv)
+        referensi_semantik = normalize_text(f"{kategori} {ringkasan_pdf} {ringkasan_csv}").strip()
 
+        # Embedding referensi
+        emb_ref = None
+        if referensi_semantik:
+            if 'semantik_ref' not in embedding_cache:
+                embedding_cache['semantik_ref'] = model.encode(referensi_semantik, convert_to_tensor=True)
+            emb_ref = embedding_cache['semantik_ref']
 
         hasil_list = []
         total_score = 0
@@ -154,12 +156,41 @@ def pembandinganJawaban(request):
             norm_kunci = normalize_text(kunci)
             norm_siswa = normalize_text(siswa)
 
-            # Embedding enriched with context
-            emb_kunci = get_embedding(norm_kunci + " " + referensi_semantik)
-            emb_siswa = get_embedding(norm_siswa + " " + referensi_semantik)
+            emb_kunci = get_embedding(norm_kunci)
+            emb_siswa = get_embedding(norm_siswa)
 
+            # Similarity utama
             similarity = util.pytorch_cos_sim(emb_kunci, emb_siswa).item()
-            tingkat, skor = classify_similarity(similarity)
+
+            # Validasi ke referensi (jika ada)
+            if emb_ref is not None:
+                sim_ref_kunci = util.pytorch_cos_sim(emb_kunci, emb_ref).item()
+                sim_ref_siswa = util.pytorch_cos_sim(emb_siswa, emb_ref).item()
+
+                if sim_ref_kunci > 0.6 and sim_ref_siswa < 0.3:
+                    similarity *= 0.6  # penalti keras
+                elif sim_ref_siswa > 0.7:
+                    similarity += 0.05  # bonus kecil
+
+            # Analisis kemiripan kata kunci
+            set_kunci = set(norm_kunci.split())
+            set_siswa = set(norm_siswa.split())
+            if set_kunci and set_siswa:
+                kesamaan_kata = len(set_kunci & set_siswa) / len(set_kunci | set_siswa)
+                if kesamaan_kata < 0.3:
+                    similarity *= 0.8
+
+            # Klasifikasi berdasarkan threshold ketat
+            if similarity < 0.45:
+                tingkat, skor = "Sangat Tidak Relevan", 1
+            elif similarity < 0.60:
+                tingkat, skor = "Tidak Relevan", 2
+            elif similarity < 0.72:
+                tingkat, skor = "Sedang", 3
+            elif similarity < 0.85:
+                tingkat, skor = "Relevan", 4
+            else:
+                tingkat, skor = "Sangat Relevan", 5
 
             total_score += skor
             hasil_list.append({
@@ -188,7 +219,6 @@ def pembandinganJawaban(request):
         return redirect('kesimpulanViews')
 
     return render(request, 'index.html', {'numbers': range(1, 6)})
-
 
 
 

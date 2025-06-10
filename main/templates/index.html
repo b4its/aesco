@@ -68,10 +68,10 @@
                             </select>
                         </div>
 
-                        {% comment %} <div>
+                    <div>
                             <label for="file-pdf" class="block mb-2 text-sm font-medium text-gray-900">Upload file
                                 PDF</label>
-                            <input type="file" id="file-pdf" name="file-pdf" accept="application/pdf" disabled
+                            <input type="file" id="file-pdf" name="file-pdf" accept="application/pdf"
                                 class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                         </div>
 
@@ -81,11 +81,11 @@
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                 <option selected disabled>Pilih kategori</option>
                                 {% for item in getKategori %}
-                                    <option value="{{ item.nama }}" disabled>{{ item.nama }}</option>
+                                    <option value="{{ item.nama }}">{{ item.nama }}</option>
                                 {% endfor %}
 
                             </select>
-                        </div> {% endcomment %}
+                        </div>
 
                     </div>
                     <div id="form-container">

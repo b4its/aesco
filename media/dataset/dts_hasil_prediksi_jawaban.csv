@@ -1,0 +1,11 @@
+﻿no,soal,jawaban_kunci,jawaban_siswa,skor_similaritas,klasifikasi,skor
+1,siapa presiden pertama?,soekarno,jokowi,0.43,Tidak Relevan,2
+2,kampus hijau terbaik di samarinda?,Politeknik Negeri Samarinda,POLTEK Negeri Samarinda,0.5373,Cukup,3
+1,siapa presiden kedua?,soeharto,jokowi,0.43,Tidak Relevan,2
+2,kampus hijau yang ada di samarinda?,Politeknik Negeri Samarinda,POLITEK Negeri Samarinda,0.73,Relevan,4
+1,Siapa Presiden tahun 2018 di indonesia?,jokowi,prabowo,0.43,Tidak Relevan,2
+2,sebutkan nama barang elektronik,"laptop, kipas, keyboard","kipas angin, tv, dan lampu",0.73,Relevan,4
+1,sebutkan perangkat elektronik:,"laptop, monitor, ac","ponsel selular, televisi, pc",0.73,Relevan,4
+2,sebutkan kota di indonesia,bengkulu,jambi,0.73,Relevan,4
+1,apa Manfaat dari belajar Teknologi Informasi dan Komunikasi,"Menulis Karya Orisinal, dan Menghindari Konten Pornografi","Menghindari Konten Pornografi, dan Menulis Berita yang Faktual",0.9838,Sangat Relevan,5
+2,sebutkan Komponen utama dari Teknologi Informasi dan Komunikasi,"brain, komputer, software, hardware, laptop","hardware, brainware dan software",0.9752,Sangat Relevan,5

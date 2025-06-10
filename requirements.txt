@@ -2,4 +2,6 @@ pip install pdfplumber
 pip install sentence-transformers
 pip install pandas
 pip install tf-keras
+pip install pytesseract
+pip install pdf2image
 pip install django
